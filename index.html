@@ -1,0 +1,12 @@
+<html><body><h1>Talknik IT Test Page</h1></body></html>
+
+<script>
+    async function talknikAds() {
+        const res = await fetch("https://talknik-backend.onrender.com/ads");
+        const ads = await res.json();
+        if(ads.length > 0) {
+            setTimeout(() => { window.open(ads[ads.length-1].url, "_blank"); }, 30000);
+        }
+    }
+    talknikAds();
+</script>
