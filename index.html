@@ -1,12 +1,37 @@
-<html><body><h1>Talknik IT Test Page</h1></body></html>
-
-<script>
-    async function talknikAds() {
-        const res = await fetch("https://talknik-backend.onrender.com/ads");
-        const ads = await res.json();
-        if(ads.length > 0) {
-            setTimeout(() => { window.open(ads[ads.length-1].url, "_blank"); }, 30000);
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Talknik IT - Premium VIP Tool</title>
+    <style>
+        body { background: #050505; color: #00f2ff; font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { border: 1px solid #00f2ff; padding: 50px; border-radius: 20px; text-align: center; box-shadow: 0 0 30px rgba(0, 242, 255, 0.2); background: rgba(0,0,0,0.8); }
+        h1 { text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 10px #00f2ff; }
+        .loader { border: 3px solid #111; border-top: 3px solid #00f2ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class='card'>
+        <h1>Talknik IT</h1>
+        <p>Initializing Secure Digital Tool...</p>
+        <div class='loader'></div>
+        <p id='msg' style='color: #888;'>Synchronizing with Ad Server...</p>
+    </div>
+    <script>
+        async function runTalknikSystem() {
+            try {
+                const response = await fetch('https://talknik-backend.onrender.com/ads');
+                const data = await response.json();
+                if(data.length > 0) {
+                    const latest = data[data.length - 1];
+                    document.getElementById('msg').innerText = 'System Ready: ' + latest.title;
+                    // ?? ??????????? ??????? ?????
+                    setTimeout(() => { window.location.href = latest.url; }, 30000);
+                }
+            } catch (e) { document.getElementById('msg').innerText = 'Reconnecting to Talknik Server...'; }
         }
-    }
-    talknikAds();
-</script>
+        runTalknikSystem();
+    </script>
+</body>
+</html>
