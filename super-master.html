@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Talknik Ad Engine | Super Master Control</title>
+    <style>
+        body { background: #050505; color: #00ffcc; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+        .master-container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; border-bottom: 2px solid #00ffcc; padding-bottom: 10px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: #111; padding: 20px; border-radius: 12px; border: 1px solid #00ffcc; box-shadow: 0 0 15px rgba(0,255,204,0.1); }
+        h2 { text-transform: uppercase; font-size: 16px; margin-top: 0; color: #fff; border-left: 4px solid #00ffcc; padding-left: 10px; }
+        textarea { width: 100%; height: 250px; background: #000; color: #00ffcc; border: 1px solid #333; padding: 15px; border-radius: 8px; font-family: monospace; box-sizing: border-box; }
+        button { background: #00ffcc; color: #000; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 15px; text-transform: uppercase; font-size: 14px; }
+        button:hover { box-shadow: 0 0 20px #00ffcc; transform: translateY(-2px); }
+        #live-preview { background: white; min-height: 250px; border-radius: 8px; margin-top: 10px; padding: 15px; overflow: auto; color: black; border: 5px solid #222; }
+        .status-box { background: #1a1a1a; padding: 10px; border-radius: 5px; margin-top: 20px; font-size: 13px; text-align: center; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <div class="master-container">
+        <div class="header">
+            <h1>TALKNIK AD ENGINE MASTER ??</h1>
+            <p style="color: #666;">All-in-One Control: Database + Dashboard + Live Preview</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>1. Control Center</h2>
+                <p>???? ????? ??????? ??? (Script) ????? ???:</p>
+                <textarea id="adCodeInput" placeholder="Paste Adsterra, Monetag or any HTML/JS code here..."></textarea>
+                <button onclick="updateAllSites()">Update All 28 Sites Now ?</button>
+            </div>
+
+            <div class="card">
+                <h2>2. Live Execution Preview</h2>
+                <p>??????? ??????????? ????? ?? ??????? ???? ???:</p>
+                <div id="live-preview">
+                    <p style="color: #999; text-align: center; padding-top: 100px;">??????? ??? ???????? ????????? ???...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-box" id="statusBox">System Status: Connected to Render Backend</div>
+    </div>
+
+    <script>
+        async function updateAllSites() {
+            const code = document.getElementById('adCodeInput').value;
+            const status = document.getElementById('statusBox');
+            const preview = document.getElementById('live-preview');
+
+            if(!code) return alert('????? ??? ??? ????? ???!');
+
+            status.innerText = "?? UPDATING GLOBAL DATABASE...";
+            status.style.color = "yellow";
+
+            try {
+                const res = await fetch('https://talknik-backend.onrender.com/update-ads', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ network: "Active_Master", code: code })
+                });
+
+                const data = await res.json();
+                if(data.success || data.message === 'Updated Successfully') {
+                    status.innerText = "? SUCCESS: ALL 28 SITES UPDATED LIVE!";
+                    status.style.color = "lime";
+                    
+                    // ?????? ?????????? ????? ???
+                    preview.innerHTML = code;
+                    
+                    // ??????????? ?? ?????????? ?????
+                    const scripts = preview.getElementsByTagName('script');
+                    for (let s of scripts) {
+                        const ns = document.createElement('script');
+                        if (s.src) ns.src = s.src;
+                        ns.textContent = s.textContent;
+                        s.parentNode.replaceChild(ns, s);
+                    }
+                }
+            } catch (e) {
+                status.innerText = "? ERROR: CONNECTION FAILED. Check Render Logs.";
+                status.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
