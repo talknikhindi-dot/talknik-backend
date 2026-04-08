@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Talknik Admin | Logic</title>
+    <style>
+        body { background: #050505; color: #00ffcc; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #111; padding: 50px; border-radius: 20px; border: 1px solid #00ffcc; box-shadow: 0 0 30px rgba(0,255,204,0.2); text-align: center; width: 350px; }
+        h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 30px; text-shadow: 0 0 10px #00ffcc; }
+        input { width: 100%; padding: 15px; margin-bottom: 20px; background: #000; border: 1px solid #333; color: #00ffcc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #00ffcc; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
+        button:hover { box-shadow: 0 0 20px #00ffcc; transform: scale(1.05); }
+        .status { margin-top: 20px; font-size: 12px; color: #555; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>TALKNIK ADMIN</h1>
+        <input type="text" id="u" placeholder="USERNAME">
+        <input type="password" id="p" placeholder="PASSWORD">
+        <button onclick="check()">UNLEASH ENGINE ??</button>
+        <div class="status">SYSTEM ENCRYPTED: AES-256</div>
+    </div>
+    <script>
+        function check() {
+            const u = document.getElementById('u').value;
+            const p = document.getElementById('p').value;
+            if(u === 'talknik_admin' && p === 'Admin12345') {
+                alert('ACCESS GRANTED! REDIRECTING TO ENGINE...');
+                window.location.href = 'test-ad.html';
+            } else {
+                alert('ACCESS DENIED! INTRUDER ALERT!');
+            }
+        }
+    </script>
+</body>
+</html>

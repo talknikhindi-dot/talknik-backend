@@ -3,38 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talknik Admin Login</title>
+    <title>Talknik Admin | Secure Login</title>
     <style>
-        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { border: 2px solid #0f0; padding: 20px; box-shadow: 0 0 15px #0f0; border-radius: 10px; }
-        input { background: #111; border: 1px solid #0f0; color: #0f0; padding: 10px; margin: 10px 0; width: 100%; display: block; }
-        button { background: #0f0; color: #000; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; }
-        button:hover { background: #0c0; }
+        body { background: #0a0a0a; color: #00ffcc; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        .login-card { background: #1a1a1a; padding: 40px; border-radius: 15px; border: 2px solid #00ffcc; box-shadow: 0 0 20px #00ffcc; width: 350px; text-align: center; position: relative; }
+        .login-card::before { content: 'TALKNIK VIP'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #00ffcc; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+        h2 { margin-bottom: 25px; letter-spacing: 2px; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 5px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: #00ffcc; box-shadow: 0 0 10px #00ffcc; }
+        button { width: 100%; padding: 12px; background: #00ffcc; border: none; border-radius: 5px; color: #000; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 15px; text-transform: uppercase; }
+        button:hover { background: #00cca3; box-shadow: 0 0 15px #00ffcc; transform: scale(1.02); }
+        .footer { margin-top: 20px; font-size: 10px; color: #555; }
     </style>
 </head>
 <body>
-    <div class="login-box">
-        <h2>TALKNIK ADMIN</h2>
-        <input type="text" id="user" placeholder="Username">
-        <input type="password" id="pass" placeholder="Password">
-        <button onclick="login()">LOGIN</button>
+    <div class="login-card">
+        <h2>Admin Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Unlock Engine ??</button>
+        </form>
+        <div class="footer">Talknik IT Solutions - Security Layer Active</div>
     </div>
 
     <script>
-        async function login() {
-            const res = await fetch('https://talknik-backend.onrender.com/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: document.getElementById('user').value, password: document.getElementById('pass').value })
-            });
-            const data = await res.json();
-            if(data.token) {
-                alert('Login Successful! Token Received.');
-                localStorage.setItem('adminToken', data.token);
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            
+            // ????????? ????? ??? (???? ?????? ???? ??????? ???? ????)
+            if(user === 'talknik_admin' && pass === 'Admin12345') {
+                alert('Access Granted! Redirecting...');
+                window.location.href = 'test-ad.html';
             } else {
-                alert('Login Failed: ' + data.message);
+                alert('Invalid Credentials! System Locked.');
             }
-        }
+        });
     </script>
 </body>
 </html>

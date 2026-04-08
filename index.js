@@ -2,36 +2,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 10000;
-
-// ???? ???????????? ??????? ????
 app.use(cors());
 app.use(express.json());
 
+// ????? ???? MongoDB Connection String
 const URI = "mongodb+srv://talknik_admin:Admin12345@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
 mongoose.connect(URI)
-    .then(() => console.log('? DATABASE CONNECTED'))
+    .then(() => console.log('? DATABASE CONNECTED SUCCESSFULLY'))
     .catch(err => console.log('? DB ERROR:', err.message));
 
-const AdSchema = new mongoose.Schema({ network: String, code: String });
-const Ad = mongoose.model('Ad', AdSchema);
-
-app.get('/', (req, res) => res.send('Talknik Engine Active ??'));
+const Ad = mongoose.model('Ad', new mongoose.Schema({ network: String, code: String }));
 
 app.post('/update-ads', async (req, res) => {
     try {
-        const { network, code } = req.body;
-        await Ad.findOneAndUpdate({ network: 'active' }, { network, code }, { upsert: true });
-        res.json({ success: true, message: 'Ad Updated' });
-    } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+        await Ad.findOneAndUpdate({ network: 'active' }, req.body, { upsert: true });
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/get-active-ad', async (req, res) => {
-    try {
-        const data = await Ad.findOne({ network: 'active' });
-        res.send(data ? data.code : '');
-    } catch (e) { res.send(''); }
+    const data = await Ad.findOne({ network: 'active' });
+    res.send(data ? data.code : '');
 });
 
-app.listen(PORT, () => console.log('?? Engine Running'));
+app.listen(10000, () => console.log('?? Engine Running on 10000'));
