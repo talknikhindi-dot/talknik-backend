@@ -1,32 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Talknik Ad-Manager</title>
-    <style>
-        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; }
-        .card { border: 1px solid #0f0; padding: 15px; margin-bottom: 10px; box-shadow: 0 0 10px #0f0; }
-        textarea { width: 100%; height: 100px; background: #111; color: #0f0; border: 1px solid #0f0; }
-        button { background: #0f0; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <h1>?? TALKNIK AD-SCRIPT MANAGER</h1>
-    <div class="card">
-        <h3>Update Active Ad Script</h3>
-        <p>Current Active Network: <span id="status">Loading...</span></p>
-        <textarea id="scriptInput" placeholder="Paste your Adsterra/Monetag/Hilltop script here..."></textarea><br><br>
-        <button onclick="updateScript()">UPDATE SCRIPT & SYNC ALL SITES</button>
-    </div>
+<head><title>Talknik Ad-Control</title></head>
+<body style="background:#000; color:#0f0; font-family:monospace; padding:20px;">
+    <h1>?? AD-MANAGER</h1>
+    <input type="text" id="net" placeholder="Network Name (e.g. Monetag)">
+    <textarea id="code" style="width:100%; height:200px;" placeholder="Paste Script Here"></textarea>
+    <button onclick="sync()">SYNC SCRIPT</button>
 
     <script>
-        async function updateScript() {
-            const script = document.getElementById('scriptInput').value;
-            const token = localStorage.getItem('token');
-            if(!token) { alert('Please login first!'); return; }
-            
-            // ??? ??? ??????? ????? ???????? ????????? ????? ?????? ?????
-            alert('Talknik Engine: Script received! Ready for rotation logic.');
-            console.log('Script to sync:', script);
+        async function sync() {
+            const res = await fetch('https://talknik-backend.onrender.com/update-ads', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ network: document.getElementById('net').value, code: document.getElementById('code').value })
+            });
+            const d = await res.json();
+            alert(d.message);
         }
     </script>
 </body>
