@@ -7,32 +7,39 @@ const bcrypt = require('bcryptjs');
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// हे महत्त्वाचे आहे: public फोल्डरला प्राधान्य देणे, जेणेकरून कोड मजकूर दिसणार नाही
 app.use(express.static(path.join(__dirname, 'public')));
 
+// MongoDB Connection (talknik2026 password)
 const mongoURI = "mongodb+srv://talknikhindi_db_user:talknik2026@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
-mongoose.connect(mongoURI).then(() => console.log('✅ DB Connected')).catch(err => console.log(err));
+mongoose.connect(mongoURI).then(() => console.log('✅ Talknik DB Connected Successfully')).catch(err => console.log(err));
 
+// User Schema
 const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 }));
 
+// Auth APIs
 app.post('/api/auth/signup', async (req, res) => {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const newUser = new User({ username: req.body.username, password: hashedPassword });
-    await newUser.save();
-    res.json({ success: true, message: "Account Created!" });
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const newUser = new User({ username: req.body.username, password: hashedPassword });
+        await newUser.save();
+        res.json({ success: true, message: "Account Created!" });
+    } catch (e) { res.status(400).json({ success: false, message: "Username exists" }); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
     if (user && await bcrypt.compare(req.body.password, user.password)) {
-        res.json({ success: true, message: "Login Successful!" });
+        res.json({ success: true, message: "Welcome to Talknik IT Portal!" });
     } else { res.status(401).json({ success: false, message: "Invalid Credentials" }); }
 });
 
-// Front-end File Generation (Clean White Theme)
+// Front-end File Generation (Professional, Clean White Look)
 if (!(Test-Path "public")) { New-Item -ItemType Directory -Path "public" }
 @"
 <!DOCTYPE html>
@@ -40,41 +47,46 @@ if (!(Test-Path "public")) { New-Item -ItemType Directory -Path "public" }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talknik IT | White Portal</title>
+    <title>Talknik IT Portal</title>
     <style>
-        body { background: #ffffff; color: #333; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 350px; text-align: center; border: 1px solid #eee; }
-        h2 { color: #222; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #0056b3; }
-        .link { margin-top: 15px; color: #007bff; cursor: pointer; font-size: 14px; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #ffffff; color: #111; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .box { background: #fff; padding: 45px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; border: 1px solid #eee; }
+        h2 { font-weight: 600; margin-bottom: 25px; color: #111; font-size: 26px; letter-spacing: -1px; }
+        p { color: #666; margin-bottom: 30px; font-size: 14px; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; transition: 0.3s; }
+        input:focus { border-color: #007bff; outline: none; background: #fff; box-shadow: 0 0 0 4px rgba(0,123,255,0.1); }
+        button { width: 100%; padding: 14px; background: #111; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; font-weight: 600; }
+        button:hover { background: #333; transform: scale(1.02); }
+        .toggle-link { margin-top: 25px; color: #007bff; font-size: 14px; cursor: pointer; font-weight: 500; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2 id="t">User Login</h2>
-        <input type="text" id="u" placeholder="Username">
-        <input type="password" id="p" placeholder="Password">
-        <button onclick="auth()" id="b">Login</button>
-        <p class="link" onclick="toggle()" id="s">New User? Register</p>
+        <h2 id="title">Welcome</h2>
+        <p id="st">Please enter your details to continue</p>
+        <input type="text" id="user" placeholder="Username">
+        <input type="password" id="pass" placeholder="Password">
+        <button onclick="auth()" id="btn">Continue</button>
+        <div class="toggle-link" onclick="toggle()" id="sw">New User? Create new account</div>
     </div>
     <script>
-        let mode = true;
+        let isLogin = true;
         function toggle() {
-            mode = !mode;
-            document.getElementById('t').innerText = mode ? "User Login" : "User Signup";
-            document.getElementById('b').innerText = mode ? "Login" : "Register";
-            document.getElementById('s').innerText = mode ? "New User? Register" : "Back to Login";
+            isLogin = !isLogin;
+            document.getElementById('title').innerText = isLogin ? "Welcome" : "Sign Up";
+            document.getElementById('st').innerText = isLogin ? "Please enter your details to continue" : "Create an account for full access";
+            document.getElementById('btn').innerText = isLogin ? "Continue" : "Register Now";
+            document.getElementById('sw').innerText = isLogin ? "New User? Create new account" : "Back to Login";
         }
         async function auth() {
-            const res = await fetch(mode ? '/api/auth/login' : '/api/auth/signup', {
+            const r = await fetch(isLogin ? '/api/auth/login' : '/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: document.getElementById('u').value, password: document.getElementById('p').value })
+                body: JSON.stringify({ username: document.getElementById('user').value, password: document.getElementById('pass').value })
             });
-            const data = await res.json();
-            alert(data.message);
+            const d = await r.json();
+            alert(d.message);
         }
     </script>
 </body>
