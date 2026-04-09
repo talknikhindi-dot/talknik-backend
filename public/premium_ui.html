@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Talknik Pro Service</title>
+    <style>
+        body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #161b22; padding: 40px; border-radius: 20px; border: 1px solid #30363d; width: 340px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h2 { color: #58a6ff; margin-bottom: 25px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 16px; }
+        .btn-blue { background: #238636; color: white; }
+        .btn-gold { background: linear-gradient(45deg, #ffd700, #ffa500); color: black; }
+        .status { margin-top: 20px; padding: 15px; border-radius: 12px; background: #21262d; border: 1px dashed #444; }
+    </style>
+</head>
+<body>
+    <div class="card" id="box">
+        <h2>Talknik Pro Login</h2>
+        <input type="text" id="u" placeholder="Username">
+        <input type="password" id="p" placeholder="Password">
+        <button class="btn btn-blue" onclick="auth('login')">Login to System</button>
+        <p style="font-size:12px; color:#8b949e; cursor:pointer" onclick="auth('signup')">Create Pro Account</p>
+    </div>
+
+    <div class="card" id="dash" style="display:none;">
+        <h2 id="userTag"></h2>
+        <div class="status" id="lock">
+            <p style="color:#f85149">❌ Access Restricted (Free)</p>
+            <button class="btn btn-gold" onclick="pay()">Upgrade to Premium (99)</button>
+        </div>
+        <div id="unlock" style="display:none;">
+            <p style="color:#3fb950">✅ Premium Access Active</p>
+            <button class="btn" style="background:#f0f6fc; color:#0d1117">Launch All Tools</button>
+        </div>
+    </div>
+
+    <script>
+        let user = "";
+        async function auth(t) {
+            const r = await fetch('/api/premium/' + t, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: document.getElementById('u').value, password: document.getElementById('p').value })
+            });
+            const d = await r.json();
+            alert(d.message);
+            if(d.success && t === 'login') {
+                user = document.getElementById('u').value;
+                document.getElementById('box').style.display = 'none';
+                document.getElementById('dash').style.display = 'block';
+                document.getElementById('userTag').innerText = "Member: " + user;
+                if(d.isPremium) show();
+            }
+        }
+        async function pay() {
+            const r = await fetch('/api/premium/upgrade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user })
+            });
+            const d = await r.json();
+            alert(d.message);
+            show();
+        }
+        function show() {
+            document.getElementById('lock').style.display = 'none';
+            document.getElementById('unlock').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

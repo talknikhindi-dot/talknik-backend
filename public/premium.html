@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Talknik Premium Service</title>
+    <style>
+        body { background: #111; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #222; padding: 40px; border-radius: 15px; border: 1px solid #444; width: 320px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-gold { background: linear-gradient(45deg, #ffd700, #ffae00); color: black; }
+        .status-box { margin-top: 20px; padding: 15px; border-radius: 10px; background: #333; }
+    </style>
+</head>
+<body>
+    <div class="card" id="loginBox">
+        <h2 style="color:#ffd700">Premium Login</h2>
+        <input type="text" id="u" placeholder="Username">
+        <input type="password" id="p" placeholder="Password">
+        <button class="btn btn-gold" onclick="auth('login')">Login</button>
+        <p style="font-size:12px; cursor:pointer" onclick="auth('signup')">New? Register Premium Account</p>
+    </div>
+
+    <div class="card" id="dashboard" style="display:none;">
+        <h2 id="userTag"></h2>
+        <div class="status-box" id="lockBox">
+            <p>🔒 Status: FREE VERSION</p>
+            <button class="btn btn-gold" onclick="pay()">Pay to Unlock All Tools</button>
+        </div>
+        <div id="unlockBox" style="display:none; color:#ffd700;">
+            <p>✅ STATUS: PREMIUM MEMBER</p>
+            <button class="btn" style="background:white">Open Software</button>
+        </div>
+    </div>
+
+    <script>
+        let user = "";
+        async function auth(type) {
+            const r = await fetch('/api/premium/' + type, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: document.getElementById('u').value, password: document.getElementById('p').value })
+            });
+            const d = await r.json();
+            alert(d.message);
+            if(d.success && type === 'login') {
+                user = document.getElementById('u').value;
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('userTag').innerText = "Hello, " + user;
+                if(d.isPremium) showUnlocked();
+            }
+        }
+        async function pay() {
+            const r = await fetch('/api/premium/upgrade', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user })
+            });
+            const d = await r.json();
+            alert(d.message);
+            showUnlocked();
+        }
+        function showUnlocked() {
+            document.getElementById('lockBox').style.display = 'none';
+            document.getElementById('unlockBox').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
