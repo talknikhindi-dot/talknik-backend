@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// तुमचा नवीन ॲटलास पासवर्ड इथे अपडेट केला आहे
+// तुमचा नवीन ॲटलास पासवर्ड 'talknik2026' इथे सेट केला आहे
 const mongoURI = "mongodb+srv://talknikhindi_db_user:talknik2026@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
