@@ -9,17 +9,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// रेंडरला सांगणे की फाईल्स 'public' फोल्डरमध्ये आहेत
+// रेंडरसाठी सर्वात महत्त्वाचे: 'public' फोल्डरला static म्हणून सेट करणे
 app.use(express.static(path.join(__dirname, 'public')));
 
 const mongoURI = "mongodb+srv://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI).then(() => console.log('✅ Talknik DB Connected!'));
 
-// रूट पाथवर मेसेज दाखवणे
-app.get('/', (req, res) => res.send('Talknik Backend is Running! Visit /test.html'));
+app.get('/', (req, res) => res.send('Talknik Backend is Live! Visit /test.html for Login Page'));
 
-// Signup आणि Login API
+// API Routes
 app.post('/api/auth/signup', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -39,4 +38,4 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log('🚀 Server is Live on ' + PORT));
+app.listen(PORT, () => console.log('🚀 Talknik Engine running on ' + PORT));
