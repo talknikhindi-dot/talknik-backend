@@ -8,17 +8,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// MongoDB Connection
-const mongoURI = process.env.MONGO_URI || "mongodb+srv://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
+// थेट कनेक्शन स्ट्रिंग वापरणे (तात्पुरते एरर घालवण्यासाठी)
+const mongoURI = "mongodb+srv://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
     .then(() => console.log('✅ Talknik DB Connected!'))
     .catch(err => console.log('❌ DB Error: ' + err.message));
 
-// Basic Route
 app.get('/', (req, res) => res.send('Talknik Engine is Live and Ready!'));
 
-// Signup API Route
+// Signup API
 app.post('/api/auth/signup', async (req, res) => {
     try {
         const { username, password } = req.body;
