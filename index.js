@@ -7,11 +7,13 @@ const bcrypt = require('bcryptjs');
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// हे कोड मजकूर लपवण्यासाठी आणि फक्त वेबसाइट दाखवण्यासाठी महत्त्वाचे आहे
 app.use(express.static(path.join(__dirname, 'public')));
 
 const mongoURI = "mongodb+srv://talknikhindi_db_user:talknik2026@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
-mongoose.connect(mongoURI).then(() => console.log('✅ Talknik DB Connected')).catch(err => console.log(err));
+mongoose.connect(mongoURI).then(() => console.log('✅ Talknik DB Connected')).catch(err => console.log('❌ Connection Error:', err));
 
 const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true },
@@ -36,4 +38,4 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.get('*', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'index.html')); });
 
-app.listen(5000, () => console.log('🚀 Server started at http://localhost:5000'));
+app.listen(5000, () => console.log('🚀 Server running: http://localhost:5000'));
