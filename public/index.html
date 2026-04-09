@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head><title>Talknik VIP Login</title></head>
+<body style="background:#0a0a0a; color:#00ffcc; text-align:center; padding-top:100px; font-family:sans-serif;">
+    <h2>Talknik Engine Login</h2>
+    <div id="auth-box">
+        <input type="text" id="u" placeholder="Username" style="padding:10px; margin:5px;"><br>
+        <input type="password" id="p" placeholder="Password" style="padding:10px; margin:5px;"><br>
+        <button onclick="send()" style="padding:10px 20px; cursor:pointer;">Login</button>
+    </div>
+    <p id="m"></p>
+    <script>
+        async function send(){
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: u.value, password: p.value})
+            });
+            const data = await res.json();
+            document.getElementById('m').innerText = data.message || data.error;
+        }
+    </script>
+</body>
+</html>

@@ -1,25 +1,29 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+﻿const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dns = require("dns");
 
-dotenv.config();
+dns.setDefaultResultOrder("ipv4first");
 const app = express();
-const PORT = 8080;
+app.use(cors());
+app.use(express.json());
 
-// Sharded Connection String - ?? ???????????? DNS ?? ?????? ????
-const uri = "mongodb://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0-shard-00-00.svqt5mp.mongodb.net:27017,cluster0-shard-00-01.svqt5mp.mongodb.net:27017,cluster0-shard-00-02.svqt5mp.mongodb.net:27017/talknik_db?ssl=true&replicaSet=atlas-svqt5mp-shard-0&authSource=admin&retryWrites=true&w=majority";
+mongoose.connect("mongodb+srv://talknikhindi_db_user:JFdirClPXXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db")
+    .then(() => console.log("✅ MongoDB Atlas Connected!"))
+    .catch(err => console.log("❌ DB Error: " + err.message));
 
-console.log('? Connecting via Direct Path...');
+const User = mongoose.model("User", new mongoose.Schema({ username: String, password: String }));
 
-mongoose.connect(uri)
-.then(() => {
-    console.log('------------------------------------------');
-    console.log('? ????? ????! ??? ???% ??????? ???? ???!');
-    console.log('------------------------------------------');
-})
-.catch((err) => {
-    console.error('? ?????? ???????? ???? ???:', err.message);
+app.post("/api/auth/register", async (req, res) => {
+    try { const u = new User(req.body); await u.save(); res.status(201).json({ message: "Success!" }); }
+    catch (e) { res.status(400).json({ error: e.message }); }
 });
 
-app.get('/', (req, res) => res.send('Talknik Project is Live!'));
-app.listen(PORT, () => console.log('?? Server is running on port 8080'));
+app.post("/api/auth/login", async (req, res) => {
+    const u = await User.findOne(req.body);
+    if (u) res.json({ message: "Login Successful!" });
+    else res.status(401).json({ error: "Invalid Credentials" });
+});
+
+const PORT = 9000;
+app.listen(PORT, () => console.log(`🚀 Server LIVE on http://localhost:${PORT}`));

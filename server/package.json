@@ -1,11 +1,1 @@
-{
-  "name": "talknik-server",
-  "version": "1.0.0",
-  "type": "module",
-  "main": "index.js",
-  "dependencies": {
-    "dotenv": "^16.6.1",
-    "express": "^4.22.1",
-    "mongoose": "^8.23.0"
-  }
-}
+﻿{ "name": "talknik-auth", "version": "1.0.0", "main": "index.js", "dependencies": { "express": "^4.18.2", "mongoose": "^7.0.0", "cors": "^2.8.5", "dotenv": "^16.0.3" } }
