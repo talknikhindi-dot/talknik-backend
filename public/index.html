@@ -9,30 +9,35 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// MongoDB Connection (talknik2026 password)
 const mongoURI = "mongodb+srv://talknikhindi_db_user:talknik2026@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
-mongoose.connect(mongoURI).then(() => console.log('✅ DB Connected')).catch(err => console.log(err));
+mongoose.connect(mongoURI).then(() => console.log('✅ Talknik DB Connected Successfully')).catch(err => console.log(err));
 
+// User Schema
 const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true }
 }));
 
+// Auth APIs
 app.post('/api/auth/signup', async (req, res) => {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const newUser = new User({ username: req.body.username, password: hashedPassword });
-    await newUser.save();
-    res.json({ success: true, message: "Account Created!" });
+    try {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const newUser = new User({ username: req.body.username, password: hashedPassword });
+        await newUser.save();
+        res.json({ success: true, message: "Account Created!" });
+    } catch (e) { res.status(400).json({ success: false, message: "Username exists" }); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
     if (user && await bcrypt.compare(req.body.password, user.password)) {
-        res.json({ success: true, message: "Login Successful!" });
+        res.json({ success: true, message: "Access Granted!" });
     } else { res.status(401).json({ success: false, message: "Invalid Credentials" }); }
 });
 
-// Front-end File Generation (Clean White Theme)
+// Front-end File Generation (Clean, Responsive, White Theme)
 if (!(Test-Path "public")) { New-Item -ItemType Directory -Path "public" }
 @"
 <!DOCTYPE html>
@@ -40,41 +45,42 @@ if (!(Test-Path "public")) { New-Item -ItemType Directory -Path "public" }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talknik IT | White Portal</title>
+    <title>Talknik IT Portal</title>
     <style>
-        body { background: #ffffff; color: #333; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 350px; text-align: center; border: 1px solid #eee; }
-        h2 { color: #222; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #0056b3; }
-        .link { margin-top: 15px; color: #007bff; cursor: pointer; font-size: 14px; }
+        body { background: #ffffff; color: #333; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .box { background: #fff; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); width: 100%; max-width: 380px; text-align: center; border: 1px solid #f0f0f0; }
+        h2 { font-weight: 500; margin-bottom: 30px; color: #111; font-size: 24px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; transition: 0.3s; }
+        input:focus { border-color: #007bff; outline: none; background: #fff; }
+        button { width: 100%; padding: 14px; background: #111; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 20px; transition: 0.3s; font-weight: 600; }
+        button:hover { background: #333; transform: scale(1.01); }
+        .tgl { margin-top: 20px; color: #007bff; font-size: 14px; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
     <div class="box">
-        <h2 id="t">User Login</h2>
+        <h2 id="t">System Login</h2>
         <input type="text" id="u" placeholder="Username">
         <input type="password" id="p" placeholder="Password">
-        <button onclick="auth()" id="b">Login</button>
-        <p class="link" onclick="toggle()" id="s">New User? Register</p>
+        <button onclick="auth()" id="b">Continue</button>
+        <div class="tgl" onclick="toggle()" id="s">New User? Register here</div>
     </div>
     <script>
         let mode = true;
         function toggle() {
             mode = !mode;
-            document.getElementById('t').innerText = mode ? "User Login" : "User Signup";
-            document.getElementById('b').innerText = mode ? "Login" : "Register";
-            document.getElementById('s').innerText = mode ? "New User? Register" : "Back to Login";
+            document.getElementById('t').innerText = mode ? "System Login" : "Create Account";
+            document.getElementById('b').innerText = mode ? "Continue" : "Register Now";
+            document.getElementById('s').innerText = mode ? "New User? Register here" : "Back to Login";
         }
         async function auth() {
-            const res = await fetch(mode ? '/api/auth/login' : '/api/auth/signup', {
+            const r = await fetch(mode ? '/api/auth/login' : '/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: document.getElementById('u').value, password: document.getElementById('p').value })
             });
-            const data = await res.json();
-            alert(data.message);
+            const d = await r.json();
+            alert(d.message);
         }
     </script>
 </body>
