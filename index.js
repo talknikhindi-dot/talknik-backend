@@ -1,21 +1,21 @@
 ﻿const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
 
-const dbURI = "mongodb+srv://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
+// थेट रेंडरवरून घेतलेला पासवर्ड वापरला आहे
+const mongoURI = "mongodb+srv://talknikhindi_db_user:JFdirClPXKXjHyBq@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
-mongoose.connect(dbURI)
-    .then(() => console.log('✅ Talknik Engine: Database Connected Successfully!'))
-    .catch(err => console.log('❌ Talknik Engine: Connection Failed -> ', err.message));
+mongoose.connect(mongoURI)
+    .then(() => console.log('✅ Talknik DB Connected Successfully!'))
+    .catch((err) => console.log('❌ DB Connection Error: ', err.message));
 
-app.get('/', (req, res) => {
-    res.send('<h1>🚀 Talknik IT Engine is Live & Connected!</h1>');
-});
+app.get('/', (req, res) => res.send('Talknik Engine Live!'));
 
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log('🚀 Server is running on port ' + PORT);
-});
+app.listen(PORT, () => console.log('🚀 Talknik Engine running on ' + PORT));
