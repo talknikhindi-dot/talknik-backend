@@ -9,43 +9,36 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// नवीन पासवर्ड talknik2026 सह MongoDB URI
 const mongoURI = "mongodb+srv://talknikhindi_db_user:talknik2026@cluster0.svqt5mp.mongodb.net/talknik_db?retryWrites=true&w=majority";
 
 mongoose.connect(mongoURI)
-    .then(() => console.log('✅ Talknik Engine: Cloud Database Connected!'))
-    .catch(err => console.log('❌ DB Connection Error: ', err.message));
+    .then(() => console.log('✅ Connected to Talknik Cloud DB!'))
+    .catch(err => console.log('❌ DB Error: ', err.message));
 
-// User Schema (पब्लिक युजर्ससाठी)
-const userSchema = new mongoose.Schema({
+const User = mongoose.model('User', new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true }
-});
-const User = mongoose.model('User', userSchema);
-
-// --- Auth APIs (Professional English) ---
+}));
 
 app.post('/api/auth/signup', async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ username, password: hashedPassword });
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        const newUser = new User({ username: req.body.username, password: hashedPassword });
         await newUser.save();
         res.status(201).json({ success: true, message: "Account Created Successfully!" });
-    } catch (error) {
-        res.status(400).json({ success: false, message: "Username already exists!" });
-    }
+    } catch (e) { res.status(400).json({ success: false, message: "Username already exists!" }); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username });
-    if (user && await bcrypt.compare(password, user.password)) {
-        res.json({ success: true, message: "Welcome to Talknik Engine! Access Granted." });
-    } else {
-        res.status(401).json({ success: false, message: "Invalid Username or Password!" });
-    }
+    const user = await User.findOne({ username: req.body.username });
+    if (user && await bcrypt.compare(req.body.password, user.password)) {
+        res.json({ success: true, message: "Login Successful! Welcome to Talknik." });
+    } else { res.status(401).json({ success: false, message: "Invalid Credentials!" }); }
 });
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log('🚀 Talknik Professional Engine running on ' + PORT));
+const PORT = 5000;
+app.listen(PORT, () => {
+    console.log('---------------------------------------------------');
+    console.log('🚀 RUNNING: http://localhost:' + PORT);
+    console.log('---------------------------------------------------');
+});
